@@ -1,0 +1,143 @@
+LOGGER SERVICE PLAN (TRUEEDGE)
+Local Logger → Local Service → Cloud Backend
+
+PURPOSE OF THIS DOCUMENT:
+This document describes how we will evolve the simple local logger into:
+1) a local HTTP service for TRADE_EVENT logging, and
+2) eventually a hosted backend that receives and serves verified trade logs.
+
+We keep all steps incremental and testable.
+
+--------------------------------------------------
+1. CURRENT STATE (LOCAL SCRIPTS)
+--------------------------------------------------
+
+We already have:
+
+- TRADE_EVENT spec (TRADE_EVENT_SPEC.txt).
+- example_trades.jsonl – static example trades.
+- logger.py:
+    - append_trade_event(event: dict) – appends JSON to trades_log.jsonl.
+    - main() – writes a single demo TRADE_EVENT.
+- simulate_trades.py:
+    - generates many simulated trades and logs them via append_trade_event.
+- metrics_demo.py:
+    - reads .jsonl files,
+    - computes simple metrics (total trades, PnL, equity, max drawdown, win rate).
+
+Everything is local, file-based, single-user.
+
+--------------------------------------------------
+2. NEXT STEP: LOCAL LOGGING SERVICE (HTTP)
+--------------------------------------------------
+
+Goal:
+- Instead of only Python scripts calling append_trade_event directly,
+  we also expose a small HTTP interface on localhost.
+
+Design (v0):
+
+- A Python script, e.g. logger_service.py, that:
+    - starts a simple HTTP server on localhost (e.g. port 8080),
+    - exposes at least one endpoint:
+        - POST /trade_event
+    - expects a JSON body describing a TRADE_EVENT,
+    - parses the JSON,
+    - validates required fields,
+    - calls append_trade_event(event),
+    - returns a simple JSON response like:
+        { "status": "ok" } or an error message.
+
+- This uses only Python standard library (http.server, json, etc.).
+  No external dependencies are required.
+
+Testing flow (local):
+
+- Start the service:
+    - python logger_service.py
+- Send a test request from another script, e.g. send_test_trade.py:
+    - This script builds a TRADE_EVENT dict,
+    - sends it via HTTP POST to http://localhost:8080/trade_event,
+    - prints the server response.
+- Confirm that:
+    - trades_log.jsonl receives new events,
+    - metrics_demo.py sees updated metrics.
+
+This gives us an API-shaped boundary that future connectors can talk to.
+
+--------------------------------------------------
+3. FUTURE CONNECTORS (CONCEPTUAL)
+--------------------------------------------------
+
+Once the HTTP service is stable, we can create connectors that run alongside real trading systems.
+
+Typical connector pattern (per platform):
+
+- Platform-specific listener:
+    - Reads trades/events from MT5, exchange APIs, or any other platform.
+- Normalizes the data to the TRADE_EVENT format.
+- Sends the normalized TRADE_EVENT to the logger service:
+    - HTTP POST /trade_event on localhost or remote server.
+
+Examples of future connectors:
+
+- MT5 connector:
+    - Expert Advisor (EA) or Python bridge that:
+        - captures trade events,
+        - converts them to TRADE_EVENT dicts,
+        - posts them to the logger service.
+- Exchange connector (e.g., for crypto):
+    - Python script using exchange API/websocket,
+    - listens to fills for an account/strategy,
+    - posts each fill as a TRADE_EVENT.
+
+For now, we do not implement these connectors; we only design around them.
+
+--------------------------------------------------
+4. EVENTUAL CLOUD BACKEND (HIGH LEVEL)
+--------------------------------------------------
+
+Later, we evolve the local logging service into a cloud backend:
+
+- Instead of POSTing to localhost only, connectors can POST to:
+    - https://api.trueedge-.../trade_event
+
+Cloud backend responsibilities:
+
+- Authenticate requests (API keys, accounts, strategy IDs).
+- Validate TRADE_EVENT objects.
+- Append events into a durable append-only store (database + hash chaining).
+- Compute and serve metrics and equity curves via API.
+- Provide web dashboards for strategies and portfolios.
+
+Migration path:
+
+1) Start with local logger_service.py on the same machine as strategies.
+2) Introduce a simple remote deployment (one small cloud instance, same API).
+3) Gradually move persistence and metrics computation into the backend.
+
+--------------------------------------------------
+5. IMMEDIATE ACTION ITEMS (IMPLEMENTATION ORDER)
+--------------------------------------------------
+
+1) Implement logger_service.py in local_logger:
+    - Basic HTTP server with POST /trade_event.
+    - Uses append_trade_event from logger.py.
+    - Returns JSON responses.
+
+2) Implement send_test_trade.py:
+    - Builds a demo TRADE_EVENT,
+    - sends it to the local logger service,
+    - checks the response.
+
+3) Update documentation:
+    - README_LOCAL_LOGGER.txt – mention logger_service and test script.
+    - Possibly create a small "LOCAL_SERVICE_QUICKSTART" doc later.
+
+4) Continue using metrics_demo.py to verify:
+    - new events are logged correctly,
+    - metrics update as expected.
+
+This document guides the evolution from:
+- single machine scripts → local HTTP service → proper backend service.
+=== END_README_LOCAL_LOGGER ===
