@@ -1,0 +1,11 @@
+# Ignore Python cache
+__pycache__/
+*.pyc
+
+# Ignore local logs and generated data files
+02_CODE/local_logger/data/trades_log.jsonl
+02_CODE/local_logger/data/*.log
+
+# Ignore temporary or backup files
+*.tmp
+*.bak

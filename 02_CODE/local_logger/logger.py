@@ -2,6 +2,8 @@ import json
 from pathlib import Path
 from datetime import datetime, timezone
 
+from trade_event_validator import validate_trade_event, TradeEventValidationError
+
 # Path to the "data" folder inside this local_logger directory
 DATA_DIR = Path(__file__).resolve().parent / "data"
 
@@ -14,30 +16,14 @@ def append_trade_event(event: dict) -> None:
     Append a single TRADE_EVENT object to the log file as one JSON line.
 
     This function assumes the event follows the TRADE_EVENT_SPEC core fields.
-    It does a simple required-field check and then appends the event to LOG_FILE.
+    It validates the event and then appends it to LOG_FILE.
     """
-    required_fields = [
-        "event_id",
-        "account_id",
-        "strategy_id",
-        "environment",
-        "venue",
-        "timestamp",
-        "symbol",
-        "side",
-        "order_type",
-        "quantity",
-        "quantity_type",
-        "price_open",
-        "price_close",
-        "fees",
-        "pnl",
-        "state",
-    ]
-
-    missing = [field for field in required_fields if field not in event]
-    if missing:
-        raise ValueError(f"Missing required fields in TRADE_EVENT: {missing}")
+    # Validate the event according to our central validator
+    try:
+        validate_trade_event(event)
+    except TradeEventValidationError as e:
+        # Re-raise as a generic ValueError so callers (and HTTP layer) can handle it simply
+        raise ValueError(f"Invalid TRADE_EVENT: {e}") from e
 
     # Make sure the data directory exists
     DATA_DIR.mkdir(exist_ok=True)
