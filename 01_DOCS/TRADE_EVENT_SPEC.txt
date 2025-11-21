@@ -1,0 +1,175 @@
+TRADE EVENT SPECIFICATION
+TRUEEDGE CORE DATA MODEL – v0.1 (DRAFT)
+
+PURPOSE:
+A TRADE_EVENT is the smallest atomic piece of information TRUEEDGE needs to describe what actually happened in the market for a given strategy.
+
+Every performance metric (equity curve, drawdown, Sharpe, etc.) will ultimately be derived from a sequence of TRADE_EVENT objects.
+
+We design this to be:
+- simple and implementable,
+- precise and unambiguous,
+- extendable later (with metadata).
+
+--------------------------------------------------
+1. HIGH-LEVEL STRUCTURE
+--------------------------------------------------
+
+We think of a TRADE_EVENT as a JSON-like object with fixed core fields and optional metadata.
+
+Example (just illustrative):
+
+{
+  "event_id": "evt_2025-11-21T10:15:32.123Z_0001",
+  "account_id": "acc_demo_001",
+  "strategy_id": "strat_xau_meanrev_v1",
+  "environment": "live",          // "live" or "demo"
+  "venue": "ICMarkets-MT5",       // broker / exchange / venue identifier
+
+  "timestamp": "2025-11-21T10:15:32.123Z",
+
+  "symbol": "XAUUSD",
+  "side": "buy",                  // "buy" or "sell"
+  "order_type": "market",         // e.g. "market", "limit", "stop"
+
+  "quantity": 0.10,               // lots or units (see quantity_type)
+  "quantity_type": "lots",        // "lots" or "units"
+
+  "price_open": 2384.50,
+  "price_close": 2386.20,
+  "fees": -1.20,                  // total commission + swap, in account currency
+
+  "pnl": 17.30,                   // profit/loss in account currency
+
+  "state": "closed",              // "open" or "closed" (for positions)
+  "linked_position_id": "pos_12345", // optional: position this trade belongs to
+
+  "tags": ["xau", "mean_reversion"],
+
+  "metadata": {
+    "raw_ticket_id": "12345678",
+    "platform": "MT5",
+    "notes": "Opened by bot signal #42"
+  }
+}
+
+--------------------------------------------------
+2. REQUIRED FIELDS (CORE)
+--------------------------------------------------
+
+These fields MUST be present in every TRADE_EVENT record:
+
+- event_id (string)
+  - Unique identifier for this event within the logging system.
+  - Example: "evt_2025-11-21T10:15:32.123Z_0001"
+
+- account_id (string)
+  - Pseudonymous identifier of the trading account.
+  - Used to distinguish between accounts without exposing real account numbers publicly.
+
+- strategy_id (string)
+  - Identifier of the strategy that generated this trade.
+  - Allows one account to run multiple strategies.
+
+- environment (string)
+  - Allowed values: "live" or "demo".
+  - Distinguishes real-money performance from paper trading.
+
+- venue (string)
+  - Human-readable identifier for broker / exchange / venue.
+  - Example: "ICMarkets-MT5", "Binance-Futures", "InteractiveBrokers".
+
+- timestamp (string, ISO 8601)
+  - Exact time of trade execution (UTC recommended).
+  - Format example: "2025-11-21T10:15:32.123Z"
+
+- symbol (string)
+  - Instrument code.
+  - Example: "XAUUSD", "EURUSD", "BTCUSDT", "US500".
+
+- side (string)
+  - "buy" or "sell".
+
+- order_type (string)
+  - Example values: "market", "limit", "stop", "stop_limit".
+
+- quantity (number)
+  - Size of the trade, as a numeric value.
+
+- quantity_type (string)
+  - "lots" (e.g. 0.10 lots of XAUUSD) or "units" (e.g. 1000 units of EURUSD).
+
+- price_open (number)
+  - Executed entry price.
+
+- price_close (number)
+  - Executed exit price for this TRADE_EVENT.
+  - For trades that represent an opening event only, price_close may be equal to price_open or null, depending on implementation.
+
+- fees (number)
+  - Total fees/commissions/swaps associated with this trade event, in account currency.
+  - Negative for costs (e.g. -1.20).
+
+- pnl (number)
+  - Profit or loss resulting from this trade, in account currency.
+  - This includes fees, so pnl is net P/L.
+
+- state (string)
+  - "open" or "closed".
+  - "closed" means this event fully represents a complete round trip (entry + exit) for a position, or a closed slice of it.
+
+--------------------------------------------------
+3. OPTIONAL FIELDS
+--------------------------------------------------
+
+These fields are optional but recommended:
+
+- linked_position_id (string)
+  - Identifier for the position this trade belongs to.
+  - Useful for platforms where positions are separate from individual fills.
+
+- tags (array of strings)
+  - Free-form tags for grouping / filtering.
+  - Example: ["xau", "mean_reversion", "asia_session"].
+
+- metadata (object)
+  - Key–value map for extra information:
+    - raw ticket ID,
+    - platform type,
+    - spread,
+    - slippage,
+    - any other broker-specific fields.
+  - This is intentionally flexible.
+
+--------------------------------------------------
+4. SIGNING & HASHING (CONCEPTUAL PREVIEW)
+--------------------------------------------------
+
+NOTE: Details will be refined later. This is a conceptual outline.
+
+- Individual TRADE_EVENT objects will be:
+  - serialized (e.g. JSON with a stable field order),
+  - hashed (e.g. SHA-256),
+  - included in a hash chain or batch.
+
+- Batches of events may be:
+  - anchored to an append-only log,
+  - periodically anchored to a public ledger (e.g. blockchain)
+    to make tampering detectable.
+
+- The key idea:
+  - Once events are logged and hashes anchored, any attempt to edit history will break verification.
+
+--------------------------------------------------
+5. NEXT STEPS
+--------------------------------------------------
+
+- Define precise JSON schema for TRADE_EVENT (v0.1).
+- Decide on:
+  - which fields are strictly required in code,
+  - which are optional with defaults.
+- Implement:
+  - a local logger that writes TRADE_EVENT objects as JSON lines to disk,
+  - a simple verifier that recomputes metrics from these events.
+
+For now, this document serves as the human-readable specification for the core TRUEEDGE trade event format.

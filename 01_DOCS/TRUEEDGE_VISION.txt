@@ -1,0 +1,157 @@
+PROJECT NAME:
+TRUEEDGE
+
+ONE-LINE SUMMARY:
+TRUEEDGE is a global exchange for trading strategies where every performance number is cryptographically tied to real, live trades — no fake backtests, no edited history.
+
+PROBLEM:
+The trading strategy world is full of:
+- over-optimized backtests that never work in reality,
+- cherry-picked screenshots,
+- fake track records,
+- “trust me, it works” signals.
+
+Serious traders and investors have no easy way to:
+- verify that a strategy actually performed as claimed,
+- compare strategies on consistent, honest data,
+- allocate capital to real edge instead of marketing.
+
+STRATEGY CREATORS have no clean way to:
+- prove their performance without working at a big fund,
+- monetize their edge transparently,
+- build portable, verifiable track records.
+
+CORE IDEA:
+TRUEEDGE defines a standard for “proof-of-performance” and builds a marketplace on top of it.
+
+Every strategy’s live trades are:
+- logged in real time,
+- signed and hashed (tamper-evident),
+- stored in an append-only ledger (e.g. blockchain or verifiable log),
+- aggregated into metrics and curves.
+
+When someone views a strategy on TRUEEDGE:
+- the equity curves, drawdowns, Sharpe ratios, etc. are calculated from these signed logs,
+- not from private spreadsheets or easily faked statements.
+
+KEY COMPONENTS:
+
+1) PERFORMANCE PROOF LAYER
+- A specification for “trade events”:
+  - time,
+  - symbol,
+  - direction,
+  - size,
+  - fill price,
+  - fees,
+  - strategy ID,
+  - account ID (pseudonymous),
+  - environment (live/demo).
+- A signing + hashing mechanism:
+  - strategies or connectors sign event batches,
+  - events are hashed and anchored into an append-only structure.
+- A verification engine:
+  - recomputes metrics from raw events,
+  - checks that event history is consistent with hashes.
+
+2) STRATEGY MARKETPLACE
+- Strategy creators can:
+  - list their strategies with verified performance,
+  - choose exposure model:
+    - full copy-trading,
+    - trade signals only,
+    - synthetic indices (bundles of sub-strategies).
+  - set pricing:
+    - subscriptions,
+    - performance fees,
+    - licence deals.
+
+- Investors / users can:
+  - filter strategies by:
+    - instrument, timeframe, risk, max drawdown, Sharpe, etc.,
+  - subscribe / allocate to selected strategies,
+  - monitor risk in a unified dashboard.
+
+3) PORTFOLIO & RISK LAYER
+- Users can build portfolios of strategies:
+  - weights per strategy,
+  - risk caps,
+  - diversification rules.
+- The system:
+  - tracks portfolio-level metrics,
+  - can auto-rebalance based on rules,
+  - can pause strategies that breach risk limits.
+
+4) ANALYTICS & TOOLS
+- Deep analytics for serious users:
+  - regime analysis,
+  - exposure by asset class / factor,
+  - trade distributions,
+  - Monte Carlo resampling,
+  - stress tests.
+- API for quants:
+  - programmatic access to verified trade histories and metrics.
+
+MONEY MODEL (FIRST VERSION):
+- Marketplace revenue share:
+  - TRUEEDGE takes a percentage of:
+    - subscription fees paid to strategy providers,
+    - performance-fee flows (where permitted),
+    - licence deals.
+- Pro analytics subscriptions:
+  - extra fee for advanced analytics dashboards and APIs.
+- Later: institutional / white-label offers for funds and prop firms.
+
+WHY THIS CAN BE INDUSTRY-LEVEL:
+- It solves a real, painful trust problem:
+  - separating real edge from noise and fraud.
+- If adopted, “TRUEEDGE-verified performance” can become:
+  - the default way to present a public track record,
+  - a common language for discussing strategies and risk.
+- It can connect:
+  - independent quants with capital,
+  - capital allocators with verifiable edges,
+  - all built on transparent, consistent data.
+
+HIGH-LEVEL ROADMAP (SUMMARY):
+
+PHASE 0 – Foundation (now)
+- Define vision and basic folder structure (local).
+- Specify the core data model for trade events and strategy performance.
+
+PHASE 1 – PROOF CORE (1–3 months)
+- Build connectors (starting with demo / paper accounts) that:
+  - capture trades,
+  - send them to a local TRUEEDGE log service.
+- Implement append-only storage and simple signing/hashing.
+- Build a basic UI to view:
+  - trade history,
+  - equity curve,
+  - key metrics.
+
+PHASE 2 – CLOUD TRUEEDGE (3–9 months)
+- Move logging + metrics to a hosted backend.
+- Implement:
+  - secure user accounts,
+  - strategy identities,
+  - verified metrics pages.
+- Onboard a small set of early strategies and test users (online only).
+
+PHASE 3 – MARKETPLACE & MONETIZATION (9–24 months)
+- Add:
+  - subscriptions,
+  - performance fee accounting where possible,
+  - integrated risk dashboards.
+- Start growing the marketplace and community.
+
+PHASE 4 – INSTITUTIONAL & STANDARDIZATION (2+ years)
+- Refine the proof standard,
+- Approach brokers, platforms, and institutions to:
+  - integrate TRUEEDGE proofs,
+  - accept TRUEEDGE-style verification as part of due diligence.
+
+TODAY’S FOCUS:
+- Create the TRUEEDGE project folder and core subfolders (DONE).
+- Create TRUEEDGE_VISION.txt and store this vision inside it.
+- Next chunks: define the core trade event format and start designing the local logging prototype.
+
