@@ -44,7 +44,35 @@ On the desktop:
     - .git/             (hidden Git metadata)
 
 --------------------------------------------------
-3. RUNNING BASIC DEMO (SINGLE EVENT)
+3. QUICK USAGE VIA CLI (RECOMMENDED)
+--------------------------------------------------
+
+Instead of running each script manually, you can use the local CLI menu.
+
+1) Open Command Prompt:
+   - Press Windows key
+   - Type: cmd
+   - Press Enter
+
+2) Go to local_logger:
+   - cd %USERPROFILE%\Desktop\TRUEEDGE\02_CODE\local_logger
+
+3) Run the CLI:
+   - python trueedge_cli.py
+
+4) Choose from the menu:
+   - 1 → log a single demo trade
+   - 2 → simulate multiple trades
+   - 3 → show basic metrics
+   - 4 → show metrics by strategy/account
+   - 5 → generate HTML report
+   - 0 → exit
+
+You can still follow the manual steps below if you prefer.
+
+
+--------------------------------------------------
+4. RUNNING BASIC DEMO (SINGLE EVENT)
 --------------------------------------------------
 
 1) Open Command Prompt:
@@ -68,7 +96,7 @@ What happens:
 - It prints which event was appended and the log file path.
 
 --------------------------------------------------
-4. RUNNING SIMULATED TRADES + METRICS
+5. RUNNING SIMULATED TRADES + METRICS
 --------------------------------------------------
 
 From Command Prompt in local_logger:
@@ -104,7 +132,7 @@ What you see:
 - Metrics grouped by account_id.
 
 --------------------------------------------------
-5. RUNNING LOCAL HTTP LOGGER SERVICE
+6. RUNNING LOCAL HTTP LOGGER SERVICE
 --------------------------------------------------
 
 1) Start the service (FIRST terminal):
@@ -155,7 +183,7 @@ What you see:
    - Press Enter.
 
 --------------------------------------------------
-6. GENERATING A LOCAL HTML REPORT
+7. GENERATING A LOCAL HTML REPORT
 --------------------------------------------------
 
 From Command Prompt in local_logger:
@@ -179,7 +207,7 @@ From Command Prompt in local_logger:
        - Metrics by account_id
 
 --------------------------------------------------
-7. GIT SNAPSHOT (OPTIONAL, BUT ALREADY USED)
+8. GIT SNAPSHOT (OPTIONAL, BUT ALREADY USED)
 --------------------------------------------------
 
 To see what has changed since the last commit:

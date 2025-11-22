@@ -89,6 +89,16 @@ FILE ROLES (DETAIL):
 
 HOW TO USE (SUMMARY):
 
+0) Use the local CLI (recommended for quick usage):
+   - cd to local_logger
+   - run: python trueedge_cli.py
+   - choose from the menu:
+       - 1: log a single demo trade
+       - 2: simulate multiple trades
+       - 3: show basic metrics
+       - 4: show metrics by strategy/account
+       - 5: generate HTML report
+
 1) Log a single demo event directly with logger.py:
    - cd to local_logger
    - run: python logger.py
