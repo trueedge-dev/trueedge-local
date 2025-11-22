@@ -1,0 +1,154 @@
+TRUEEDGE – CODE STRUCTURE PLAN (DRAFT v0.1)
+
+PURPOSE:
+Define how the TRUEEDGE codebase is organized so it can grow from:
+- a local prototype on one laptop
+into:
+- a clean open-source project,
+- and later a deployable backend service.
+
+This is a high-level plan, not strict rules; we will refine as we implement.
+
+--------------------------------------------------
+1. CURRENT STRUCTURE (LOCAL PROTOTYPE)
+--------------------------------------------------
+
+ROOT FOLDER (TRUEEDGE):
+- README_TRUEEDGE.txt          <-- project overview
+- .gitignore                   <-- Git ignore rules
+- 01_DOCS/                     <-- documents, specs, plans
+- 02_CODE/                     <-- all code (for now)
+- 03_MARKET/                   <-- reserved for marketplace logic
+- 04_INFRA/                    <-- reserved for deployment/infra scripts
+- 05_LOGS/                     <-- reserved for system logs later (currently unused)
+
+01_DOCS/:
+- TRUEEDGE_VISION.txt          <-- narrative vision of the project
+- TRADE_EVENT_SPEC.txt         <-- TRADE_EVENT data model specification
+- LOGGER_SERVICE_PLAN.txt      <-- plan for local HTTP logging service → cloud backend
+- TRUEEDGE_MONEY_PLAN.txt      <-- monetization paths and phases
+- CODE_STRUCTURE_PLAN.txt      <-- (this document)
+- (future) LOCAL_QUICKSTART / API docs, etc.
+
+02_CODE/:
+- local_logger/                <-- first working implementation (local prototype)
+    - README_LOCAL_LOGGER.txt
+    - data/
+        - example_trades.jsonl
+        - trades_log.jsonl
+    - logger.py
+    - trade_event_validator.py
+    - simulate_trades.py
+    - metrics_demo.py
+    - metrics_by_strategy.py
+    - generate_html_report.py
+    - logger_service.py
+    - send_test_trade.py
+    - reports/
+        - index.html           <-- generated local report
+
+Other folders (03_MARKET, 04_INFRA, 05_LOGS) are placeholders for future phases.
+
+--------------------------------------------------
+2. SHORT-TERM CODE ORGANIZATION GOALS
+--------------------------------------------------
+
+Goal: Keep it simple but structured enough that someone on GitHub can:
+- understand what does what,
+- run things quickly,
+- extend or integrate.
+
+Near-term priorities:
+- Keep local_logger as a self-contained "app" for:
+    - local logging,
+    - metrics,
+    - reports,
+    - HTTP service.
+- Avoid over-abstracting too early (no need for heavy frameworks yet).
+- Extract shared logic (e.g. metrics, validation) into reusable modules when duplication becomes annoying.
+
+Possible small refactors:
+- metrics_core.py:
+    - common functions for:
+        - load_events,
+        - sort_events,
+        - compute_metrics,
+        - group_by_key.
+    - imported by metrics_demo, metrics_by_strategy, generate_html_report.
+- core/ package (later):
+    - trade_event_validator,
+    - any common types/schemas.
+
+--------------------------------------------------
+3. MEDIUM-TERM STRUCTURE (WHEN MOVING TOWARD BACKEND)
+--------------------------------------------------
+
+Once we prepare for a real backend and serious open-source repo, a more structured layout is expected, such as:
+
+- trueedge/
+    - core/
+        - __init__.py
+        - trade_event_validator.py
+        - metrics_core.py
+        - models/ (data classes / pydantic models, etc.)
+    - apps/
+        - local_logger/
+            - __init__.py
+            - logger.py
+            - logger_service.py
+            - simulate_trades.py
+            - metrics_demo.py
+            - metrics_by_strategy.py
+            - generate_html_report.py
+        - (future) web_dashboard/
+        - (future) api_backend/
+    - connectors/
+        - (future) mt5/
+        - (future) exchange_X/
+    - docs/
+        - Sphinx/Markdown docs
+    - tests/
+        - unit tests for core and apps
+
+This would allow:
+- installation via pip (python -m pip install trueedge),
+- clearer separation between:
+    - core infrastructure,
+    - apps,
+    - connectors,
+    - tests.
+
+We will only move to this layout once:
+- local prototype is stable,
+- we are ready to expose TRUEEDGE as a proper installable package.
+
+--------------------------------------------------
+4. NAMING & STYLE PRINCIPLES
+--------------------------------------------------
+
+- Filenames:
+    - snake_case for Python files (logger_service.py).
+    - Uppercase_with_underscores for top-level docs (TRUEEDGE_MONEY_PLAN.txt).
+- Folder names:
+    - all lowercase with underscores where needed.
+- Python style:
+    - simple, readable,
+    - type hints where useful but not mandatory at this stage,
+    - focus on clarity and correctness over cleverness.
+
+--------------------------------------------------
+5. NEXT ACTIONS FROM THIS PLAN
+--------------------------------------------------
+
+Short-term (already started):
+- Keep all local prototype code in 02_CODE/local_logger.
+- Add helper docs (LOCAL_QUICKSTART, etc.).
+- Keep metrics and validation logic centralized enough to avoid bugs.
+
+Later:
+- Introduce a "core" module when we start a real backend or multiple apps.
+- Introduce tests (tests/ folder) when the core functions stabilize.
+- Move to a proper package layout (trueedge/...) when preparing for:
+    - GitHub open-source release,
+    - pip install,
+    - and a simple cloud deployment.

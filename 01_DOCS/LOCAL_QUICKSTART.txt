@@ -1,0 +1,203 @@
+TRUEEDGE – LOCAL QUICKSTART (for this laptop)
+
+PURPOSE:
+Short, practical guide for running the TRUEEDGE local prototype on this machine.
+
+--------------------------------------------------
+1. REQUIREMENTS (ALREADY INSTALLED HERE)
+--------------------------------------------------
+
+- Python 3.x
+    - Verified by running: python --version
+- Git (for version control)
+    - Verified by running: git --version
+- OS: Windows (using Command Prompt and File Explorer)
+
+No extra Python packages are required yet (we only use the standard library).
+
+--------------------------------------------------
+2. FOLDER OVERVIEW
+--------------------------------------------------
+
+On the desktop:
+
+- TRUEEDGE/
+    - README_TRUEEDGE.txt
+    - 01_DOCS/          <-- all documents and plans
+    - 02_CODE/          <-- all code
+        - local_logger/
+            - data/
+            - logger.py
+            - trade_event_validator.py
+            - simulate_trades.py
+            - metrics_demo.py
+            - metrics_by_strategy.py
+            - generate_html_report.py
+            - logger_service.py
+            - send_test_trade.py
+            - reports/
+                - index.html (generated report)
+    - 03_MARKET/        (reserved)
+    - 04_INFRA/         (reserved)
+    - 05_LOGS/          (reserved)
+    - .gitignore
+    - .git/             (hidden Git metadata)
+
+--------------------------------------------------
+3. RUNNING BASIC DEMO (SINGLE EVENT)
+--------------------------------------------------
+
+1) Open Command Prompt:
+   - Press Windows key
+   - Type: cmd
+   - Press Enter
+
+2) Go to local_logger:
+   - Type:
+       cd %USERPROFILE%\Desktop\TRUEEDGE\02_CODE\local_logger
+   - Press Enter
+
+3) Run logger.py once:
+   - Type:
+       python logger.py
+   - Press Enter
+
+What happens:
+- logger.py builds one demo TRADE_EVENT.
+- It appends it to data/trades_log.jsonl.
+- It prints which event was appended and the log file path.
+
+--------------------------------------------------
+4. RUNNING SIMULATED TRADES + METRICS
+--------------------------------------------------
+
+From Command Prompt in local_logger:
+
+1) Generate many simulated trades:
+   - Type:
+       python simulate_trades.py
+   - Press Enter
+   - Output: "Simulated and logged N trades."
+
+2) View metrics:
+   - Type:
+       python metrics_demo.py
+   - Press Enter
+
+What you see:
+- Metrics for example_trades.jsonl (static sample file).
+- Metrics for trades_log.jsonl (file with logged + simulated trades):
+    - total_trades
+    - total_pnl
+    - ending_equity
+    - max_drawdown
+    - wins, losses, win_rate
+
+3) View metrics grouped by strategy/account:
+   - Type:
+       python metrics_by_strategy.py
+   - Press Enter
+
+What you see:
+- Overall metrics.
+- Metrics grouped by strategy_id.
+- Metrics grouped by account_id.
+
+--------------------------------------------------
+5. RUNNING LOCAL HTTP LOGGER SERVICE
+--------------------------------------------------
+
+1) Start the service (FIRST terminal):
+
+   - Open Command Prompt.
+   - Go to local_logger:
+       cd %USERPROFILE%\Desktop\TRUEEDGE\02_CODE\local_logger
+   - Start the service:
+       python logger_service.py
+
+   - You should see:
+       TRUEEDGE logger service running on http://127.0.0.1:8080
+       POST TRADE_EVENT JSON to /trade_event to log an event.
+
+   - Leave this window running (do not close).
+
+2) Send a demo TRADE_EVENT over HTTP (SECOND terminal):
+
+   - Open a second Command Prompt.
+   - Go to local_logger:
+       cd %USERPROFILE%\Desktop\TRUEEDGE\02_CODE\local_logger
+   - Run the test client:
+       python send_test_trade.py
+
+   - Expected output:
+       Sending demo TRADE_EVENT to logger service...
+       Response status: 200
+       Response body: {"status": "ok"}
+
+3) Check metrics again in the SECOND terminal:
+   - Type:
+       python metrics_demo.py
+   - Press Enter
+
+   - total_trades for trades_log.jsonl should be higher than before.
+
+4) Stop the service (FIRST terminal):
+   - Click inside the FIRST Command Prompt window.
+   - Press Ctrl + C once.
+   - You should see "Stopping server..." / "Server stopped."
+   - Type:
+       exit
+   - Press Enter.
+
+5) Close the SECOND terminal:
+   - Type:
+       exit
+   - Press Enter.
+
+--------------------------------------------------
+6. GENERATING A LOCAL HTML REPORT
+--------------------------------------------------
+
+From Command Prompt in local_logger:
+
+1) Generate the report:
+   - Type:
+       python generate_html_report.py
+   - Press Enter
+
+   - Expected output:
+       Report generated at: ...\TRUEEDGE\02_CODE\local_logger\reports\index.html
+
+2) Open the report:
+   - In File Explorer:
+       - Go to Desktop → TRUEEDGE → 02_CODE → local_logger → reports
+       - Double-click index.html
+
+   - Your browser opens and shows:
+       - Overall metrics for trades_log.jsonl
+       - Metrics by strategy_id
+       - Metrics by account_id
+
+--------------------------------------------------
+7. GIT SNAPSHOT (OPTIONAL, BUT ALREADY USED)
+--------------------------------------------------
+
+To see what has changed since the last commit:
+
+1) Open Command Prompt.
+2) Go to TRUEEDGE root:
+   - cd %USERPROFILE%\Desktop\TRUEEDGE
+3) Check status:
+   - git status
+
+To save changes:
+1) Stage files:
+   - git add .
+2) Commit:
+   - git commit -m "Your commit message here"
+
+This quickstart is enough to:
+- rerun all local demos,
+- inspect metrics,
+- test the HTTP service,
+- regenerate the HTML report.
