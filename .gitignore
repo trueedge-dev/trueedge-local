@@ -6,6 +6,10 @@ __pycache__/
 02_CODE/local_logger/data/trades_log.jsonl
 02_CODE/local_logger/data/*.log
 
+# Ignore generated HTML reports
+02_CODE/local_logger/reports/index.html
+02_CODE/local_logger/reports/*.html
+
 # Ignore temporary or backup files
 *.tmp
 *.bak
