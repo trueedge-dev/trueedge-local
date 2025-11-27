@@ -14,7 +14,7 @@ if str(LOCAL_LOGGER_DIR) not in sys.path:
     sys.path.insert(0, str(LOCAL_LOGGER_DIR))
 
 from trade_event_validator import validate_trade_event, TradeEventValidationError
-from metrics_core import compute_metrics
+from metrics_core import compute_metrics, group_by_key
 
 
 class TrueedgeBackendHandler(BaseHTTPRequestHandler):
@@ -49,6 +49,58 @@ class TrueedgeBackendHandler(BaseHTTPRequestHandler):
                 },
                 "count": len(events),
                 "metrics": metrics,
+            }
+            self._send_json(200, response)
+            return
+
+        if path == "/metrics/by_strategy":
+            query = parse_qs(parsed.query)
+            account_id = query.get("account_id", [None])[0]
+
+            events = db.fetch_events(account_id=account_id, strategy_id=None)
+            groups = group_by_key(events, "strategy_id")
+
+            strategies = []
+            for strat_id, strat_events in groups.items():
+                m = compute_metrics(strat_events, starting_balance=0.0)
+                strategies.append(
+                    {
+                        "strategy_id": strat_id,
+                        "count": len(strat_events),
+                        "metrics": m,
+                    }
+                )
+
+            response = {
+                "status": "ok",
+                "filters": {"account_id": account_id},
+                "strategies": strategies,
+            }
+            self._send_json(200, response)
+            return
+
+        if path == "/metrics/by_account":
+            query = parse_qs(parsed.query)
+            strategy_id = query.get("strategy_id", [None])[0]
+
+            events = db.fetch_events(account_id=None, strategy_id=strategy_id)
+            groups = group_by_key(events, "account_id")
+
+            accounts = []
+            for acc_id, acc_events in groups.items():
+                m = compute_metrics(acc_events, starting_balance=0.0)
+                accounts.append(
+                    {
+                        "account_id": acc_id,
+                        "count": len(acc_events),
+                        "metrics": m,
+                    }
+                )
+
+            response = {
+                "status": "ok",
+                "filters": {"strategy_id": strategy_id},
+                "accounts": accounts,
             }
             self._send_json(200, response)
             return
@@ -114,6 +166,8 @@ def main() -> None:
     print("  GET  /health")
     print("  POST /trade_event")
     print("  GET  /metrics/overall?account_id=...&strategy_id=...")
+    print("  GET  /metrics/by_strategy?account_id=...")
+    print("  GET  /metrics/by_account?strategy_id=...")
     print("Press Ctrl+C to stop.")
     try:
         httpd.serve_forever()
