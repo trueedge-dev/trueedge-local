@@ -1,0 +1,199 @@
+TRUEEDGE – GO-TO-MARKET PLAN (DRAFT v0.1)
+
+PURPOSE:
+This document answers: “How do we go from a cool TRUEEDGE prototype to actual users and money?”
+It focuses on low-cost, realistic steps for a 19-year-old in Slovenia/Croatia, with ~0 marketing budget.
+
+We break it into stages:
+
+- Stage 0 – Foundation (NOW)
+- Stage 1 – Positioning & Portfolio
+- Stage 2 – First users (free → low-ticket)
+- Stage 3 – Turning it into a real product line
+- Stage 4 – Bigger deals (tooling/consulting / SaaS)
+
+--------------------------------------------------
+STAGE 0 – FOUNDATION (NOW, IN PROGRESS)
+--------------------------------------------------
+
+Goal:
+Have something we’re not ashamed to show to serious people.
+
+What we already have:
+- Local logger + metrics + HTML report.
+- Backend API with:
+    - POST /trade_event
+    - GET /metrics/overall
+    - GET /metrics/by_strategy
+    - GET /metrics/by_account
+    - GET /report (HTML, DB-backed)
+- Clean repo on GitHub with docs.
+
+Remaining foundation tasks (future technical tasks, not executed yet here):
+- A few more metrics (risk-focused, e.g. Sharpe-style approximations, max consecutive losses).
+- One or two “example datasets” with multiple strategies/accounts.
+- A very clear, simple “demo script” that:
+    - starts backend,
+    - loads sample data,
+    - opens /report.
+
+These will make TRUEEDGE demo-friendly.
+
+--------------------------------------------------
+STAGE 1 – POSITIONING & PORTFOLIO
+--------------------------------------------------
+
+Goal:
+Use TRUEEDGE as a “proof of skill” asset.
+
+Who might care:
+- Independent algo traders.
+- Small quant/dev shops.
+- Prop traders / small funds who are weak in tooling.
+- Potential future employers looking for:
+    - Python,
+    - backend,
+    - data/metrics,
+    - trading knowledge.
+
+Positioning statement (short version):
+- TRUEEDGE is a small open infrastructure for verifiable trading performance:
+    - ingest trade logs,
+    - compute metrics,
+    - generate HTML/JSON reports,
+    - backed by a real database.
+
+How this can be used in portfolio:
+- “Here’s a project I built that:
+    - has a local and backend mode,
+    - uses Python, SQLite, HTTP APIs,
+    - implements non-trivial metrics,
+    - is structured and documented like a serious project.”
+
+Later we will create:
+- a short “PROJECT SUMMARY” text,
+- a simple description you can paste on CV / LinkedIn / GitHub profile.
+
+--------------------------------------------------
+STAGE 2 – FIRST USERS (FREE → LOW-TICKET)
+--------------------------------------------------
+
+Goal:
+Get a few REAL PEOPLE using TRUEEDGE for something:
+
+- Logging their strategies,
+- Getting reports,
+- Maybe replacing their Excel sheets / manual logs.
+
+We start with:
+- Free / beta users to get feedback,
+- Not with aggressive monetization.
+
+Possible sources (online, no in-person cold visits):
+- Reddit communities (quant/trading/programming) – following each platform’s rules.
+- Discord servers focused on algo trading.
+- Niche forums where people complain about “backtest screenshots” and want better tracking.
+
+Example offer:
+- “I’ve built a small open-source project called TRUEEDGE that can log trades to a database and generate verifiable reports (HTML + JSON). I’m looking for 3–5 early users (algorithmic traders or small teams) who want help setting up clean performance tracking. I’ll help you integrate it for free in exchange for feedback and permission to show anonymized screenshots (no strategy details).”
+
+This can be done:
+- Via posts (where allowed).
+- Via DMs only when appropriate and not spammy.
+
+Later, this feedback will tell us:
+- Which features matter,
+- Which metrics are missing,
+- Which UX flows are confusing.
+
+--------------------------------------------------
+STAGE 3 – TURNING IT INTO A REAL PRODUCT LINE
+--------------------------------------------------
+
+We will keep three concrete paths open and see which gains traction:
+
+PATH A – TOOLING/CONSULTING (HIGH-TICKET, FEW CLIENTS)
+- Offer:
+    - “We build and maintain a TRUEEDGE-style performance tracking system tailored to your small prop firm / fund / trading desk.”
+- Components:
+    - Custom connectors to their broker/MT5/Exchange (later).
+    - Dedicated backend deployment (their own server or a cloud instance).
+    - Custom dashboards (per strategy, per trader, risk views).
+- Monetization:
+    - Setup fee (one-time).
+    - Optional monthly maintenance fee.
+
+PATH B – TRUEEDGE CLOUD (SaaS, MANY SMALL USERS)
+- Offer:
+    - Hosted version of TRUEEDGE:
+        - You sign up,
+        - get an API key,
+        - send your trades to our backend,
+        - see metrics + reports on the web.
+- Monetization:
+    - Free tier:
+        - limited strategies/accounts.
+    - Paid tiers:
+        - more history,
+        - more strategies,
+        - PDF report export,
+        - private sharing links.
+
+PATH C – VERIFICATION LAYER FOR CAPITAL (LONG-TERM)
+- Offer:
+    - A “verification layer”:
+        - Strategies listed with verified performance,
+        - Allocators use TRUEEDGE reports to evaluate them.
+- Monetization:
+    - Listing fees,
+    - Revenue share on allocation platforms,
+    - White-label deals with bigger firms.
+
+Early stages:
+- Focus mainly on PATH A & B.
+- Keep PATH C in mind as a future outcome if TRUEEDGE gains trust.
+
+--------------------------------------------------
+STAGE 4 – PRACTICAL NEXT STEPS (NO ACTION YET, JUST PREP)
+--------------------------------------------------
+
+These are actions we will later execute with exact scripts/messages:
+
+1) Improve documentation:
+   - Add a README section “How to run the backend demo”.
+   - Add a simple diagram (architecture) as text or ASCII first.
+
+2) Prepare outreach assets:
+   - A short “1-paragraph pitch” of TRUEEDGE.
+   - A more detailed “what problems it solves”.
+   - A “help me integrate this” offer for early testers.
+
+3) Identify 2–3 places to find early testers:
+   - One subreddit.
+   - One Discord.
+   - One specialized forum or community.
+
+4) Draft messages:
+   - Public post template (respecting each community’s rules).
+   - DM template (used sparingly, with respect).
+
+All of the above will be executed later via exact instructions:
+- “Open X, click Y, paste this: '...message text...'.”
+
+--------------------------------------------------
+SUMMARY
+--------------------------------------------------
+
+- TRUEEDGE’s money path is realistic and infrastructure-based, not hype-based.
+- Near term:
+    - Strengthen the core (metrics, docs, backend).
+    - Use TRUEEDGE as a strong portfolio piece.
+- Medium term:
+    - Acquire a few real users (even for free) to pressure-test the system.
+- Longer term:
+    - Turn usage and feedback into:
+        - tooling/consulting deals,
+        - or a minimal SaaS,
+        - and maybe a verification layer later.
+
+This plan will be refined as TRUEEDGE and your situation evolve.

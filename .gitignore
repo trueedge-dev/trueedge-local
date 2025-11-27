@@ -13,3 +13,7 @@ __pycache__/
 # Ignore temporary or backup files
 *.tmp
 *.bak
+
+# Ignore backend SQLite database
+02_CODE/api_backend/trueedge_backend.db
+
